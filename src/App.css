@@ -1,3 +1,13 @@
+@font-face {
+  font-family: 'YourFontName'; /* 1. ตั้งชื่อฟอนต์ที่จะใช้ใน CSS */
+  src: url('../fonts/MyCustomFont.otf') format('opentype'); /* 2. ระบุตำแหน่งไฟล์ */
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+
+
 * {
   margin: 0;
   padding: 0;
