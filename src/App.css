@@ -1,12 +1,9 @@
 @font-face {
   font-family: 'mc'; /* 1. ตั้งชื่อฟอนต์ที่จะใช้ใน CSS */
-  src: url('../public/fonts/minecraft.otf') format('opentype'); /* 2. ระบุตำแหน่งไฟล์ */
+  src: url('mc.otf') format('opentype'); /* 2. ระบุตำแหน่งไฟล์ */
   font-weight: normal;
   font-style: normal;
 }
-
-
-
 
 * {
   margin: 0;
@@ -17,7 +14,7 @@
 body {
   height: 100vh;
   color: white;
-  background-image: url('../public/yhcufciztc.jpg');
+  background-image: url('yhcufciztc.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
