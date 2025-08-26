@@ -1,0 +1,21 @@
+@font-face {
+  font-family: 'mc'; /* 1. ตั้งชื่อฟอนต์ที่จะใช้ใน CSS */
+  src: url('../public/mc.otf') format('opentype'); /* 2. ระบุตำแหน่งไฟล์ */
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  color: white;
+  background-image: url('../public/yhcufciztc.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
