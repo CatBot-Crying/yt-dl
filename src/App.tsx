@@ -37,19 +37,8 @@ const App: React.FC = () => {
   const [isSearching, setIsSearching] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const apiKeys: string[] = [
-    'db751b0a05msh95365b14dcde368p12dbd9jsn440b1b8ae7cb',
-    '0649dc83c2msh88ac949854b30c2p1f2fe8jsn871589450eb3',
-    '0e88d5d689msh145371e9bc7d2d8p17eebejsn8ff825d6291f',
-    'ea7a66dfaemshecacaabadeedebbp17b247jsn7966d78a3945',
-  ];
-
-  let currentKeyIndex = 0;
-
-  const getNextApiKey = (): string => {
-    currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
-    return apiKeys[currentKeyIndex];
-  };
+  // Use a single, constant API key
+  const apiKey: string = 'db751b0a05msh95365b14dcde368p12dbd9jsn440b1b8ae7cb';
 
   const youtube_parser = (url: string): string | false => {
     url = url.replace(/\?si=.*/, '');
@@ -73,12 +62,11 @@ const App: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const apiKey = getNextApiKey();
       const response = await axios.get<{ link: string }>(
         `https://youtube-mp36.p.rapidapi.com/dl?id=${youtubeID}`,
         {
           headers: {
-            'X-RapidAPI-Key': apiKey,
+            'X-RapidAPI-Key': apiKey, // Use the single apiKey constant
             'X-RapidAPI-Host': 'youtube-mp36.p.rapidapi.com',
           },
         }
