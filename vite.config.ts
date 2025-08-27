@@ -8,7 +8,7 @@ export default defineConfig({
     proxy: {
       // ถ้ามีการเรียก API ไปที่ /api ให้ส่งต่อไปยัง PHP server
       '/api': {
-        target: 'http://localhost', // หรือ URL ของ PHP server ของคุณ เช่น http://localhost:8080
+        target: 'http://alone-value.atwebpages.com', // หรือ URL ของ PHP server ของคุณ เช่น http://localhost:8080
         changeOrigin: true,
         secure: false,
       },
