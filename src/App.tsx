@@ -37,8 +37,19 @@ const App: React.FC = () => {
   const [isSearching, setIsSearching] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // API Key ถูกย้ายไปที่ Backend แล้ว ไม่ต้องมีที่นี่
-  // const apiKey: string = '...';
+  const apiKeys: string[] = [
+    'db751b0a05msh95365b14dcde368p12dbd9jsn440b1b8ae7cb',
+    '0649dc83c2msh88ac949854b30c2p1f2fe8jsn871589450eb3',
+    '0e88d5d689msh145371e9bc7d2d8p17eebejsn8ff825d6291f',
+    'ea7a66dfaemshecacaabadeedebbp17b247jsn7966d78a3945',
+  ];
+
+  let currentKeyIndex = 0;
+
+  const getNextApiKey = (): string => {
+    currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
+    return apiKeys[currentKeyIndex];
+  };
 
   const youtube_parser = (url: string): string | false => {
     url = url.replace(/\?si=.*/, '');
@@ -62,9 +73,15 @@ const App: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // เปลี่ยนการเรียก API ไปยัง Backend ของเรา
+      const apiKey = getNextApiKey();
       const response = await axios.get<{ link: string }>(
-        `http://ec2-3-26-101-127.ap-southeast-2.compute.amazonaws.com:8000/api/convert?id=${youtubeID}`
+        `https://youtube-mp36.p.rapidapi.com/dl?id=${youtubeID}`,
+        {
+          headers: {
+            'X-RapidAPI-Key': apiKey,
+            'X-RapidAPI-Host': 'youtube-mp36.p.rapidapi.com',
+          },
+        }
       );
 
       if (response.data && response.data.link) {
@@ -76,7 +93,7 @@ const App: React.FC = () => {
           text: 'Your MP3 is ready for download.',
         });
       } else {
-         throw new Error('Invalid response from our server');
+         throw new Error('Invalid response from API');
       }
     } catch (error) {
       console.error('Error:', error);
