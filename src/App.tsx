@@ -71,7 +71,7 @@ const App: React.FC = () => {
     try {
       // FIX: Use the new ApiResponse type for the axios call
       const response = await axios.get<ApiResponse>(
-        `/api/convert.php?id=${youtubeID}`
+        `http://alone-value.atwebpages.com/api/convert.php?id=${youtubeID}`
       );
 
       // FIX: Use a type guard ('link' in response.data) to safely access properties
