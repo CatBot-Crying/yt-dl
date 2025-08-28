@@ -37,8 +37,8 @@ const App: React.FC = () => {
   const [isSearching, setIsSearching] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Use a single, constant API key
-  const apiKey: string = 'db751b0a05msh95365b14dcde368p12dbd9jsn440b1b8ae7cb';
+  // API Key has been removed from the frontend for security.
+  // The PHP backend will handle the API calls.
 
   const youtube_parser = (url: string): string | false => {
     url = url.replace(/\?si=.*/, '');
@@ -62,14 +62,9 @@ const App: React.FC = () => {
 
     setIsLoading(true);
     try {
+      // Call our own PHP backend API which handles caching and external API calls.
       const response = await axios.get<{ link: string }>(
-        `https://youtube-mp36.p.rapidapi.com/dl?id=${youtubeID}`,
-        {
-          headers: {
-            'X-RapidAPI-Key': apiKey, // Use the single apiKey constant
-            'X-RapidAPI-Host': 'youtube-mp36.p.rapidapi.com',
-          },
-        }
+        `/api/convert.php?id=${youtubeID}`
       );
 
       if (response.data && response.data.link) {
@@ -81,14 +76,15 @@ const App: React.FC = () => {
           text: 'Your MP3 is ready for download.',
         });
       } else {
-         throw new Error('Invalid response from API');
+         // This could be an error from our PHP API (e.g., { "error": "message" })
+         throw new Error(response.data?.['error' as any] || 'Invalid response from our server');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error:', error);
       Swal.fire({
         icon: 'error',
         title: 'Failed',
-        text: 'Something went wrong. Please try again.',
+        text: error?.response?.data?.error || 'Something went wrong. Please try again.',
       });
     } finally {
       setIsLoading(false);
