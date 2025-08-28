@@ -17,7 +17,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import DownloadIcon from '@mui/icons-material/Download';
 import './App.css';
 
-// Create a dark theme that matches the aesthetic
+// ... (Theme code remains the same)
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -31,18 +31,25 @@ const darkTheme = createTheme({
   },
 });
 
+// FIX: Define a type that can represent both a success and an error response from our API
+type ApiResponse = {
+  link: string;
+  error?: never; // 'never' ensures that if 'link' exists, 'error' cannot.
+} | {
+  link?: never; // Ensures that if 'error' exists, 'link' cannot.
+  error: string;
+};
+
+
 const App: React.FC = () => {
   const [inputUrl, setInputUrl] = useState<string>('');
   const [downloadLink, setDownloadLink] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // API Key has been removed from the frontend for security.
-  // The PHP backend will handle the API calls.
-
   const youtube_parser = (url: string): string | false => {
     url = url.replace(/\?si=.*/, '');
-    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[7]?.length === 11) ? match[7] : false;
   };
@@ -62,12 +69,13 @@ const App: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // Call our own PHP backend API which handles caching and external API calls.
-      const response = await axios.get<{ link: string }>(
+      // FIX: Use the new ApiResponse type for the axios call
+      const response = await axios.get<ApiResponse>(
         `/api/convert.php?id=${youtubeID}`
       );
 
-      if (response.data && response.data.link) {
+      // FIX: Use a type guard ('link' in response.data) to safely access properties
+      if ('link' in response.data && response.data.link) {
         setDownloadLink(response.data.link);
         setIsSearching(false);
         Swal.fire({
@@ -76,15 +84,18 @@ const App: React.FC = () => {
           text: 'Your MP3 is ready for download.',
         });
       } else {
-         // This could be an error from our PHP API (e.g., { "error": "message" })
-         throw new Error(response.data?.['error' as any] || 'Invalid response from our server');
+         // If there's no 'link', TypeScript knows it must be the error object.
+         throw new Error(response.data.error || 'Invalid response from our server');
       }
     } catch (error: any) {
       console.error('Error:', error);
+      // This logic now correctly handles errors thrown from the 'try' block
+      // as well as network errors from axios.
+      const errorMessage = error?.response?.data?.error || error.message || 'Something went wrong. Please try again.';
       Swal.fire({
         icon: 'error',
         title: 'Failed',
-        text: error?.response?.data?.error || 'Something went wrong. Please try again.',
+        text: errorMessage,
       });
     } finally {
       setIsLoading(false);
